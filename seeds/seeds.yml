@@ -1,0 +1,15 @@
+version: 2
+
+seeds:
+  gss:
+    people:
+      description: "Region-to-regional manager mapping table"
+      schema: raw
+      column_types:
+        region: string
+        regional_manager: string
+      tests:
+        - unique:
+            column_name: region
+        - not_null:
+            column_name: region
