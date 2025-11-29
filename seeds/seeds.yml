@@ -5,3 +5,4 @@ seeds:
     description: "Region-to-regional manager mapping table"
     config:
       schema: raw
+      quote_columns: true
