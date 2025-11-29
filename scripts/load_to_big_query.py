@@ -1,14 +1,52 @@
 from google.cloud import bigquery
 
-client = bigquery.Client()
+client = bigquery.Client(project="data-gss")
 
-def load_csv_to_bq(uri, table_id):
+def get_orders_schema():
+    """Define schema for orders table with renamed columns"""
+    return [
+        bigquery.SchemaField("row_id", "INTEGER"),
+        bigquery.SchemaField("order_id", "STRING"),
+        bigquery.SchemaField("order_date", "STRING"),
+        bigquery.SchemaField("ship_date", "STRING"),
+        bigquery.SchemaField("ship_mode", "STRING"),
+        bigquery.SchemaField("customer_id", "STRING"),
+        bigquery.SchemaField("customer_name", "STRING"),
+        bigquery.SchemaField("segment", "STRING"),
+        bigquery.SchemaField("country_region", "STRING"),
+        bigquery.SchemaField("city", "STRING"),
+        bigquery.SchemaField("state_province", "STRING"),
+        bigquery.SchemaField("postal_code", "STRING"),
+        bigquery.SchemaField("region", "STRING"),
+        bigquery.SchemaField("product_id", "STRING"),
+        bigquery.SchemaField("category", "STRING"),
+        bigquery.SchemaField("sub_category", "STRING"),
+        bigquery.SchemaField("product_name", "STRING"),
+        bigquery.SchemaField("sales", "FLOAT64"),
+        bigquery.SchemaField("quantity", "INTEGER"),
+        bigquery.SchemaField("discount", "FLOAT64"),
+        bigquery.SchemaField("profit", "FLOAT64"),
+    ]
+
+def get_returns_schema():
+    """Define schema for returns table with renamed columns"""
+    return [
+        bigquery.SchemaField("returned", "STRING"),
+        bigquery.SchemaField("order_id", "STRING"),
+    ]
+
+def load_csv_to_bq(uri, table_id, schema=None):
     job_config = bigquery.LoadJobConfig(
         source_format=bigquery.SourceFormat.CSV,
         skip_leading_rows=1,
-        autodetect=True,
-        write_disposition="WRITE_TRUNCATE"
+        write_disposition="WRITE_TRUNCATE",
     )
+    
+    if schema:
+        job_config.schema = schema
+    else:
+        job_config.autodetect = True
+        job_config.column_name_character_map = "V2"
 
     load_job = client.load_table_from_uri(
         uri,
@@ -22,16 +60,15 @@ def load_csv_to_bq(uri, table_id):
 
 def main():
     bucket = "gs://gss-raw-data"
-
-    files = {
-        "orders": f"{bucket}/orders.csv",
-        "returns": f"{bucket}/returns.csv"
-    }
-
     dataset = "raw"
 
-    for table, uri in files.items():
-        load_csv_to_bq(uri, f"{dataset}.{table}")
+    # Load orders with custom schema
+    orders_uri = f"{bucket}/orders.csv"
+    load_csv_to_bq(orders_uri, f"{dataset}.orders", schema=get_orders_schema())
+    
+    # Load returns with custom schema
+    returns_uri = f"{bucket}/returns.csv"
+    load_csv_to_bq(returns_uri, f"{dataset}.returns", schema=get_returns_schema())
 
 if __name__ == "__main__":
     main()
