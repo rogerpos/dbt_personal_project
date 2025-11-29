@@ -6,11 +6,11 @@ seeds:
     config:
       schema: raw
       column_types:
-        region: string
-        regional_manager: string
+        Region: string
+        Regional Manager: string
     columns:
-      - name: region
+      - name: Region
         tests:
           - unique
           - not_null
-      - name: regional_manager
+      - name: Regional Manager
