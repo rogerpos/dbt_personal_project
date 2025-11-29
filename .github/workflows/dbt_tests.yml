@@ -39,6 +39,7 @@ jobs:
               dev:
                 type: bigquery
                 method: service-account
+                keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"
                 project: data-gss
                 dataset: dbt_default
                 threads: 4
