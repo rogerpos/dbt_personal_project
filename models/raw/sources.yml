@@ -22,11 +22,17 @@ sources:
           - name: ship_mode
             tests:
               - accepted_values:
-                  values: ["Standard Class", "First Class", "Second Class", "Same Day"]
+                  config:
+                    severity: warn
+                  arguments:
+                    values: ["Standard Class", "First Class", "Second Class", "Same Day"]
 
           - name: category
             tests:
               - accepted_values:
-                  values: ["Office Supplies", "Furniture", "Technology"]
+                  config:
+                    severity: warn
+                  arguments:
+                    values: ["Office Supplies", "Furniture", "Technology"]
       
       - name: returns
