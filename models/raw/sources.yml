@@ -1,0 +1,32 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    database: data-gss
+    tables:
+      - name: orders
+        columns:
+          - name: order_id
+            tests:
+              - not_null
+
+          - name: order_date
+            tests:
+              - not_null
+
+          - name: ship_date
+            tests:
+              - not_null
+
+          - name: ship_mode
+            tests:
+              - accepted_values:
+                  values: ["Standard Class", "First Class", "Second Class", "Same Day"]
+
+          - name: category
+            tests:
+              - accepted_values:
+                  values: ["Office Supplies", "Furniture", "Technology"]
+      
+      - name: returns
