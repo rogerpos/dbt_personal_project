@@ -1,0 +1,54 @@
+name: dbt Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9.6'
+      
+      - name: Install dependencies
+        run: |
+          pip install dbt-bigquery
+      
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml << EOF
+          guido_gss_profile:
+            target: dev
+            outputs:
+              dev:
+                type: bigquery
+                method: service-account
+                project: data-gss
+                dataset: dbt_default
+                threads: 4
+                timeout_seconds: 300
+                location: europe-north2
+          EOF
+      
+      - name: Run dbt seed
+        run: dbt seed
+      
+      - name: Run dbt run
+        run: dbt run
+      
+      - name: Run dbt test
+        run: dbt test
