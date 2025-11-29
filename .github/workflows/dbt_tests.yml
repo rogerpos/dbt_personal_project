@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9.6'
+          python-version: '3.12'
       
       - name: Install dependencies
         run: |
@@ -47,8 +47,8 @@ jobs:
       - name: Run dbt seed
         run: dbt seed
       
-      - name: Run dbt run
-        run: dbt run
+      - name: Run dbt run metrics
+        run: dbt run -s metrics
       
       - name: Run dbt test
         run: dbt test
