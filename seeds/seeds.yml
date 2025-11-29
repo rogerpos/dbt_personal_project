@@ -5,12 +5,3 @@ seeds:
     description: "Region-to-regional manager mapping table"
     config:
       schema: raw
-      column_types:
-        Region: string
-        Regional Manager: string
-    columns:
-      - name: Region
-        tests:
-          - unique
-          - not_null
-      - name: Regional Manager
