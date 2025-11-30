@@ -20,7 +20,7 @@ joined AS (
         o.ship_date,
         o.product_id,
         o.customer_id,
-        o.state,
+        o.state_province,
         o.city,
         o.region,
         o.country_region,
@@ -37,4 +37,4 @@ joined AS (
         ON o.region = p.region
 )
 
-SELECT * FROM joined;
+SELECT * FROM joined

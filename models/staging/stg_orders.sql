@@ -21,11 +21,11 @@ renamed AS (
         quantity,
         discount,
         profit,
-        state,
+        state_province,
         city,
         region,
         country_region
     FROM source
 )
 
-SELECT * FROM renamed;
+SELECT * FROM renamed

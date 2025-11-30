@@ -5,4 +5,4 @@ SELECT DISTINCT
     product_name,
     category,
     sub_category AS subcategory
-FROM {{ ref('stg_orders') }};
+FROM {{ ref('stg_orders') }}
