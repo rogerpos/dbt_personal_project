@@ -1,8 +1,8 @@
 {{ config(materialized='table') }}
 
 SELECT DISTINCT
-    state,
+    state_province,
     city,
     region,
     country_region
-FROM {{ ref('stg_orders') }};
+FROM {{ ref('stg_orders') }}

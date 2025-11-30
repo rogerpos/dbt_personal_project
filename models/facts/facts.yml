@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: fact_orders
+    columns:
+      - name: row_id
+        tests:
+          - unique
+          - not_null
+
+      - name: product_id
+        tests:
+          - relationships:
+              to: ref('dim_product')
+              field: product_id
+      
+      - name: customer_id
+        tests:
+          - relationships:
+              to: ref('dim_customer')
+              field: customer_id
+
+      - name: region
+        tests:
+          - relationships:
+              to: ref('dim_people')
+              field: region

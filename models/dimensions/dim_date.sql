@@ -17,4 +17,4 @@ WITH dates AS (
     ) AS day
 )
 
-SELECT * FROM dates;
+SELECT * FROM dates

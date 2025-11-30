@@ -1,7 +1,7 @@
 {{ config(materialized="view") }}
 
 SELECT
-    region,
-    regional_manager
-FROM {{ ref('people') }};
+    Region AS region,
+    `Regional Manager` AS regional_manager
+FROM {{ ref('people') }}
 
