@@ -1,0 +1,45 @@
+-- --This model does not need to run, it is just for reference, so it is commented out
+
+
+-- -- I need to select all the orders from 2019, extract the month and category
+-- WITH orders_2019 AS (
+--     SELECT
+--         order_id,
+--         category,
+--         EXTRACT(MONTH FROM PARSE_DATE('%d/%m/%Y', order_date)) AS month
+--     FROM {{ source('raw', 'orders') }}
+--     WHERE EXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', order_date)) = 2019
+-- ),
+-- -- Get all category/month combinations that exist in 2019 orders
+-- all_category_months AS (
+--     SELECT DISTINCT
+--         category,
+--         month
+--     FROM orders_2019
+-- ),
+-- -- I want to get distinct returns to avoid double counting
+-- returns_distinct AS (
+--     SELECT DISTINCT order_id
+--     FROM {{ source('raw', 'returns') }}
+-- ),
+-- -- Calculate returns for each category/month
+-- returns_by_category_month AS (
+--     SELECT
+--         o.category,
+--         o.month,
+--         COUNT(DISTINCT o.order_id) AS total_returns
+--     FROM orders_2019 o
+--     INNER JOIN returns_distinct r
+--         ON o.order_id = r.order_id
+--     GROUP BY o.category, o.month
+-- )
+
+-- SELECT
+--     acm.category,
+--     acm.month,
+--     COALESCE(r.total_returns, 0) AS total_returns
+-- FROM all_category_months acm
+-- LEFT JOIN returns_by_category_month r
+--     ON acm.category = r.category
+--     AND acm.month = r.month
+-- ORDER BY acm.category, acm.month
