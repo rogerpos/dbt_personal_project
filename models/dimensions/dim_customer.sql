@@ -1,8 +1,7 @@
 {{ config(materialized='table') }}
 
 SELECT DISTINCT
-    product_id,
-    product_name,
-    category,
-    sub_category AS subcategory
+    customer_id,
+    customer_name,
+    segment
 FROM {{ ref('stg_orders') }}
