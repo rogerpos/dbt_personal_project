@@ -47,6 +47,9 @@ jobs:
                 location: europe-north2
           EOF
       
+      - name: Run dbt deps
+        run: dbt deps
+      
       - name: Run dbt seed
         run: dbt seed
       

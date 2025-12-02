@@ -1,7 +1,7 @@
-from flask import Flask
+from fastapi import FastAPI, Request
 from google.cloud import bigquery
 
-app = Flask(__name__)
+app = FastAPI(title="BigQuery Load Job", description="Load CSV files from GCS to BigQuery")
 
 def get_orders_schema():
     return [
@@ -76,11 +76,34 @@ def run_ingestion():
     return "Ingestion job completed successfully"
 
 
-@app.route("/", methods=["GET"])
-def trigger():
-    return run_ingestion(), 200
+@app.get("/")
+async def trigger_get():
+    """
+    Handle GET requests (manual triggers)
+    """
+    print("[INFO] Triggered manually via GET")
+    message = run_ingestion()
+    return {"message": message, "status": "success"}
+
+
+@app.post("/")
+async def trigger_post(request: Request):
+    """
+    Handle POST requests (Eventarc triggers)
+    """
+    print("[INFO] Triggered by Eventarc event")
+    # Event data is available via await request.json() if needed
+    message = run_ingestion()
+    return {"message": message, "status": "success"}
+
+
+@app.get("/health")
+async def health():
+    """Health check endpoint"""
+    return {"status": "healthy", "service": "bigquery-load"}
 
 
 if __name__ == "__main__":
+    import uvicorn
     print("[DEBUG] Running locally on port 8080")
-    app.run(host="0.0.0.0", port=8080)
+    uvicorn.run(app, host="0.0.0.0", port=8080)

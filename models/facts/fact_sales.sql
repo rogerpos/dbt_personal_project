@@ -8,8 +8,8 @@ returns AS (
     SELECT * FROM {{ ref('stg_returns') }}
 ),
 
-people AS (
-    SELECT * FROM {{ ref('stg_people') }}
+geo AS (
+    SELECT * FROM {{ ref('dim_geo') }}
 ),
 
 joined AS (
@@ -20,21 +20,20 @@ joined AS (
         o.ship_date,
         o.product_id,
         o.customer_id,
-        o.state_province,
-        o.city,
-        o.region,
-        o.country_region,
+        g.geo_key,
         o.sales,
         o.quantity,
         o.discount,
         o.profit,
-        COALESCE(r.return_flag, 0) AS return_flag,
-        p.regional_manager
+        COALESCE(r.return_flag, 0) AS is_returned
     FROM orders o
     LEFT JOIN returns r
         ON o.order_id = r.order_id
-    LEFT JOIN people p
-        ON o.region = p.region
+    LEFT JOIN geo g
+        ON o.state_province = g.state_province
+        AND o.city = g.city
+        AND o.region = g.region
+        AND o.country_region = g.country_region
 )
 
 SELECT * FROM joined
