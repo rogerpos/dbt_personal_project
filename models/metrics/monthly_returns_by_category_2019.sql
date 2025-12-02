@@ -1,56 +1,24 @@
-WITH orders_clean AS (
+-- I need to select all the orders from 2019, extract the month and category
+WITH orders_2019 AS (
     SELECT
         order_id,
         category,
-        PARSE_DATE('%d/%m/%Y', order_date) AS order_date
+        EXTRACT(MONTH FROM PARSE_DATE('%d/%m/%Y', order_date)) AS month
     FROM {{ source('raw', 'orders') }}
+    WHERE EXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', order_date)) = 2019
 ),
-
-all_categories AS (
-    SELECT DISTINCT category
-    FROM orders_clean
-    WHERE EXTRACT(YEAR FROM order_date) = 2019
-),
-
-all_months AS (
-    SELECT month
-    FROM UNNEST(GENERATE_ARRAY(1, 12)) AS month
-),
-
-category_month_combinations AS (
-    SELECT 
-        c.category,
-        m.month
-    FROM all_categories c
-    CROSS JOIN all_months m
-),
-
-returns_2019 AS (
-    SELECT
-        r.order_id,
-        o.category,
-        EXTRACT(MONTH FROM o.order_date) AS month
-    FROM {{ source('raw', 'returns') }} r
-    LEFT JOIN orders_clean o
-        ON r.order_id = o.order_id
-    WHERE EXTRACT(YEAR FROM o.order_date) = 2019
-),
-
-monthly_returns AS (
-    SELECT
-        category,
-        month,
-        COUNT(*) AS total_returns
-    FROM returns_2019
-    GROUP BY 1, 2
+-- I want to get distinct returns to avoid double counting
+returns_distinct AS (
+    SELECT DISTINCT order_id
+    FROM {{ source('raw', 'returns') }}
 )
 
-SELECT 
-    cmc.category,
-    cmc.month,
-    COALESCE(mr.total_returns, 0) AS total_returns
-FROM category_month_combinations cmc
-LEFT JOIN monthly_returns mr
-    ON cmc.category = mr.category
-    AND cmc.month = mr.month
-ORDER BY cmc.category, cmc.month
+SELECT
+    o.category,
+    o.month,
+    COUNT(DISTINCT o.order_id) AS total_returns
+FROM orders_2019 o
+INNER JOIN returns_distinct r
+    ON o.order_id = r.order_id
+GROUP BY o.category, o.month
+ORDER BY o.category, o.month

@@ -3,7 +3,8 @@ WITH orders_2019 AS (
     SELECT
         state_province,
         sales,
-        region
+        region,
+        country_region
     FROM {{ source('raw', 'orders') }}
     WHERE EXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', order_date)) = 2019
 ),
@@ -12,6 +13,7 @@ enriched AS (
     SELECT
         o.state_province,
         o.region,
+        o.country_region,
         p.`Regional Manager` as regional_manager,
         o.sales
     FROM orders_2019 AS o
@@ -20,9 +22,9 @@ enriched AS (
 )
 
 SELECT
-    state_province,
+    country_region,
     region,
-    CONCAT(state_province, ' - ', region) AS state_region,
+    state_province,
     regional_manager,
     SUM(sales) AS total_sales
 FROM enriched

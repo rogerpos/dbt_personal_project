@@ -49,6 +49,9 @@ models:
     metrics:
       +schema: metrics
       +materialized: view
+    metrics-filter:
+      +schema: metrics_filter
+      +materialized: view
 
 seeds:
   gss:

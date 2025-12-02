@@ -5,7 +5,7 @@ WITH source AS (
 ),
 
 renamed AS (
-    SELECT
+    SELECT DISTINCT
         order_id,
         1 AS return_flag
     FROM source
