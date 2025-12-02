@@ -22,8 +22,9 @@ enriched AS (
 SELECT
     state_province,
     region,
+    CONCAT(state_province, ' - ', region) AS state_region,
     regional_manager,
     SUM(sales) AS total_sales
 FROM enriched
-GROUP BY 1, 2, 3
+GROUP BY 1, 2, 3, 4
 ORDER BY total_sales DESC
