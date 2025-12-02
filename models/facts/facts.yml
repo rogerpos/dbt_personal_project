@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: fact_orders
+  - name: fact_sales
     columns:
       - name: row_id
         tests:
@@ -11,17 +11,20 @@ models:
       - name: product_id
         tests:
           - relationships:
-              to: ref('dim_product')
-              field: product_id
+              arguments:
+                to: ref('dim_product')
+                field: product_id
       
       - name: customer_id
         tests:
           - relationships:
-              to: ref('dim_customer')
-              field: customer_id
+              arguments:
+                to: ref('dim_customer')
+                field: customer_id
 
-      - name: region
+      - name: geo_key
         tests:
           - relationships:
-              to: ref('dim_people')
-              field: region
+              arguments:
+                to: ref('dim_geo')
+                field: geo_key
