@@ -1,0 +1,12 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'cloudrun/Dockerfile.upload'
+      - '-t'
+      - 'europe-north2-docker.pkg.dev/data-gss/cloud-run-source-deploy/upload-csv-to-gcs:latest'
+      - '.'
+images:
+  - 'europe-north2-docker.pkg.dev/data-gss/cloud-run-source-deploy/upload-csv-to-gcs:latest'
+timeout: '600s'

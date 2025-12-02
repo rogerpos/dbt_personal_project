@@ -1,0 +1,23 @@
+FROM python:3.12-slim
+
+# Install OS-level dependencies (optional but recommended)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy requirements and install dependencies
+COPY cloudrun/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Create raw_files directory and copy CSV files
+RUN mkdir -p raw_files
+COPY raw_files/orders.csv raw_files/returns.csv ./raw_files/
+
+# Copy the upload script
+COPY cloudrun/upload_to_gcs.py .
+
+ENV PORT=8080
+
+CMD ["python", "upload_to_gcs.py"]
