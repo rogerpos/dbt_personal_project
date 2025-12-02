@@ -26,7 +26,7 @@ category_month_combinations AS (
 ),
 
 returns_2019 AS (
-    SELECT
+    SELECT DISTINCT
         r.order_id,
         o.category,
         EXTRACT(MONTH FROM o.order_date) AS month
@@ -40,7 +40,7 @@ monthly_returns AS (
     SELECT
         category,
         month,
-        COUNT(*) AS total_returns
+        COUNT(DISTINCT order_id) AS total_returns
     FROM returns_2019
     GROUP BY 1, 2
 )
