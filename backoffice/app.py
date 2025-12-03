@@ -98,7 +98,7 @@ HTML_TEMPLATE = """
         <div class="info">
             <strong>Report includes:</strong>
             <ul>
-                <li>Country/Region</li>
+                <li>Country</li>
                 <li>Region</li>
                 <li>State/Province</li>
                 <li>Regional Manager</li>
