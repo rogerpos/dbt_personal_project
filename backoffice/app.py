@@ -98,9 +98,9 @@ HTML_TEMPLATE = """
         <div class="info">
             <strong>Report includes:</strong>
             <ul>
-                <li>State/Province</li>
+                <li>Country/Region</li>
                 <li>Region</li>
-                <li>State-Region combination</li>
+                <li>State/Province</li>
                 <li>Regional Manager</li>
                 <li>Total Sales</li>
             </ul>
@@ -121,26 +121,28 @@ def get_top_selling_states_query(year):
         SELECT
             state_province,
             sales,
-            region
+            region,
+            country_region
         FROM `data-gss.raw.orders`
         WHERE EXTRACT(YEAR FROM PARSE_DATE('%d/%m/%Y', order_date)) = {year}
     ),
-    
+
     enriched AS (
         SELECT
             o.state_province,
             o.region,
+            o.country_region,
             p.`Regional Manager` as regional_manager,
             o.sales
         FROM orders_year AS o
         LEFT JOIN `data-gss.raw.people` AS p
-            ON o.region = p.Region
+            ON o.region = p.`Region`
     )
-    
+
     SELECT
-        state_province,
+        country_region,
         region,
-        CONCAT(state_province, ' - ', region) AS state_region,
+        state_province,
         regional_manager,
         SUM(sales) AS total_sales
     FROM enriched
@@ -180,9 +182,9 @@ async def export_csv(year: int = Query(..., ge=2000, le=2030, description="Year 
         
         # Write header
         writer.writerow([
-            'state_province',
+            'country_region',
             'region',
-            'state_region',
+            'state_province',
             'regional_manager',
             'total_sales'
         ])
@@ -191,9 +193,9 @@ async def export_csv(year: int = Query(..., ge=2000, le=2030, description="Year 
         row_count = 0
         for row in results:
             writer.writerow([
-                row.state_province,
+                row.country_region,
                 row.region,
-                row.state_region,
+                row.state_province,
                 row.regional_manager,
                 round(row.total_sales, 2)
             ])
